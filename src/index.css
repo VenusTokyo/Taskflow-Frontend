@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --primary-900: #4C5A46;
+  --primary-800: #5F6F57;
+  --primary-700: #7C8B74;
+  --bg-50: #FAF8F3;
+  --bg-100: #F4F1EA;
+  --bg-200: #E7E1D6;
+  --text-900: #2F3630;
+  --text-700: #3E463B;
+  --text-500: #7C8B74;
+  --muted-300: #C2CBBE;
+  --muted-400: #A3AD9B;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
+  background-color: var(--bg-50);
+  color: var(--text-900);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+input, textarea, button, select {
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--muted-300);
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: var(--bg-50);
+  color: var(--text-900);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary-800);
+}
+
+.btn-primary {
+  background-color: var(--primary-800);
+  color: var(--bg-50);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.15s;
+}
+
+.btn-primary:hover:not(:disabled) { background-color: var(--primary-900); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-700);
+  border: 1px solid var(--muted-300);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.15s;
+}
+
+.btn-secondary:hover { background-color: var(--bg-200); }
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-700);
+}

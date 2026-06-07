@@ -1,0 +1,6 @@
+export const getToken = () => localStorage.getItem('token')
+export const setToken = (t) => localStorage.setItem('token', t)
+export const removeToken = () => localStorage.removeItem('token')
+export const getUser = () => JSON.parse(localStorage.getItem('user') || 'null')
+export const setUser = (u) => localStorage.setItem('user', JSON.stringify(u))
+export const removeUser = () => localStorage.removeItem('user')
