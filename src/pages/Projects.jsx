@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import Sidebar from '../components/Sidebar'
+import AppLayout from '../components/AppLayout'
 import ProjectCard from '../components/ProjectCard'
 import Modal from '../components/Modal'
 import api from '../lib/api'
@@ -39,82 +39,60 @@ export default function Projects() {
     onSuccess: () => { invalidate(); closeModal() },
   })
 
-  const openCreate = () => {
-    setForm(EMPTY_FORM)
-    setError('')
-    setModal('create')
-  }
-
-  const openEdit = (project) => {
-    setEditingProject(project)
-    setForm({ title: project.title, description: project.description || '' })
-    setError('')
-    setModal('edit')
-  }
-
-  const openDelete = (project) => {
-    setDeletingProject(project)
-    setModal('delete')
-  }
-
-  const closeModal = () => {
-    setModal(null)
-    setEditingProject(null)
-    setDeletingProject(null)
-    setError('')
-  }
+  const openCreate = () => { setForm(EMPTY_FORM); setError(''); setModal('create') }
+  const openEdit   = (p) => { setEditingProject(p); setForm({ title: p.title, description: p.description || '' }); setError(''); setModal('edit') }
+  const openDelete = (p) => { setDeletingProject(p); setModal('delete') }
+  const closeModal = () => { setModal(null); setEditingProject(null); setDeletingProject(null); setError('') }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
-    if (modal === 'create') {
-      createMutation.mutate(form)
-    } else if (modal === 'edit') {
-      editMutation.mutate({ id: editingProject.id, ...form })
-    }
+    if (modal === 'create') createMutation.mutate(form)
+    else if (modal === 'edit') editMutation.mutate({ id: editingProject.id, ...form })
   }
 
   const isPending = createMutation.isPending || editMutation.isPending
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF8F3' }}>
-      <Sidebar />
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 36 }}>
-          <h1 style={{ fontSize: 32, fontWeight: 700, color: '#2F3630', margin: 0 }}>My Projects</h1>
-          <button className="btn-primary" onClick={openCreate} style={{ padding: '10px 24px' }}>
-            + New Project
-          </button>
-        </div>
+    <AppLayout>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 12,
+        marginBottom: 36,
+      }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, color: '#2F3630', margin: 0 }}>My Projects</h1>
+        <button className="btn-primary" onClick={openCreate} style={{ padding: '10px 24px' }}>
+          + New Project
+        </button>
+      </div>
 
-        {/* Grid */}
-        {isLoading ? (
-          <p style={{ color: '#7C8B74' }}>Loading projects...</p>
-        ) : projects.length === 0 ? (
-          <div style={{
-            background: '#F4F1EA',
-            border: '1px dashed #C2CBBE',
-            borderRadius: 16,
-            padding: '60px 24px',
-            textAlign: 'center',
-            color: '#7C8B74',
-          }}>
-            <p style={{ margin: '0 0 16px', fontSize: 15 }}>No projects yet. Create your first one!</p>
-            <button className="btn-primary" onClick={openCreate}>Create Project</button>
-          </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: 20,
-          }}>
-            {projects.map(p => (
-              <ProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={openDelete} />
-            ))}
-          </div>
-        )}
-      </main>
+      {/* Grid */}
+      {isLoading ? (
+        <p style={{ color: '#7C8B74' }}>Loading projects...</p>
+      ) : projects.length === 0 ? (
+        <div style={{
+          background: '#F4F1EA', border: '1px dashed #C2CBBE',
+          borderRadius: 16, padding: '60px 24px',
+          textAlign: 'center', color: '#7C8B74',
+        }}>
+          <p style={{ margin: '0 0 16px', fontSize: 15 }}>No projects yet. Create your first one!</p>
+          <button className="btn-primary" onClick={openCreate}>Create Project</button>
+        </div>
+      ) : (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: 20,
+        }}>
+          {projects.map(p => (
+            <ProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={openDelete} />
+          ))}
+        </div>
+      )}
 
       {/* Create / Edit Modal */}
       <Modal
@@ -178,6 +156,6 @@ export default function Projects() {
           </button>
         </div>
       </Modal>
-    </div>
+    </AppLayout>
   )
 }

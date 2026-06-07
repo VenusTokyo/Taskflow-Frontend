@@ -4,9 +4,9 @@ import { useDraggable, useDroppable } from '@dnd-kit/core'
 import TaskCard from './TaskCard'
 
 const COLUMNS = [
-  { id: 'todo', title: 'To Do' },
+  { id: 'todo',        title: 'To Do'       },
   { id: 'in_progress', title: 'In Progress' },
-  { id: 'done', title: 'Done' },
+  { id: 'done',        title: 'Done'        },
 ]
 
 function DraggableTask({ task, onEdit }) {
@@ -35,15 +35,15 @@ function Column({ column, tasks, onAddTask, onEditTask }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
 
   return (
+    /* CSS class handles flex sizing; inline handles colours */
     <div
       ref={setNodeRef}
+      className="kanban-col"
       style={{
         background: isOver ? '#D0CBC0' : '#F4F1EA',
         border: `2px solid ${isOver ? '#5F6F57' : '#C2CBBE'}`,
         borderRadius: 16,
         padding: 16,
-        flex: 1,
-        minWidth: 260,
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -54,12 +54,9 @@ function Column({ column, tasks, onAddTask, onEditTask }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#2F3630' }}>{column.title}</h3>
         <span style={{
-          background: '#C2CBBE',
-          color: '#3E463B',
-          borderRadius: 20,
-          padding: '2px 10px',
-          fontSize: 12,
-          fontWeight: 600,
+          background: '#C2CBBE', color: '#3E463B',
+          borderRadius: 20, padding: '2px 10px',
+          fontSize: 12, fontWeight: 600,
         }}>
           {tasks.length}
         </span>
@@ -74,15 +71,10 @@ function Column({ column, tasks, onAddTask, onEditTask }) {
       <button
         onClick={() => onAddTask(column.id)}
         style={{
-          width: '100%',
-          padding: '10px',
-          background: 'transparent',
-          border: '1px dashed #C2CBBE',
-          borderRadius: 8,
-          color: '#7C8B74',
-          cursor: 'pointer',
-          fontSize: 13,
-          marginTop: 4,
+          width: '100%', padding: '10px',
+          background: 'transparent', border: '1px dashed #C2CBBE',
+          borderRadius: 8, color: '#7C8B74',
+          cursor: 'pointer', fontSize: 13, marginTop: 4,
         }}
       >
         + Add Task
@@ -110,9 +102,7 @@ export default function KanbanBoard({ tasks, onAddTask, onEditTask, onUpdateStat
     const newStatus = over.id
     if (COLUMNS.some(c => c.id === newStatus)) {
       const task = tasks.find(t => t.id === active.id)
-      if (task && task.status !== newStatus) {
-        onUpdateStatus(active.id, newStatus)
-      }
+      if (task && task.status !== newStatus) onUpdateStatus(active.id, newStatus)
     }
   }
 
@@ -122,16 +112,19 @@ export default function KanbanBoard({ tasks, onAddTask, onEditTask, onUpdateStat
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        {COLUMNS.map(col => (
-          <Column
-            key={col.id}
-            column={col}
-            tasks={tasksByColumn[col.id]}
-            onAddTask={onAddTask}
-            onEditTask={onEditTask}
-          />
-        ))}
+      {/* kanban-scroll enables horizontal swipe on mobile */}
+      <div className="kanban-scroll">
+        <div className="kanban-board">
+          {COLUMNS.map(col => (
+            <Column
+              key={col.id}
+              column={col}
+              tasks={tasksByColumn[col.id]}
+              onAddTask={onAddTask}
+              onEditTask={onEditTask}
+            />
+          ))}
+        </div>
       </div>
       <DragOverlay dropAnimation={null}>
         {activeTask ? <TaskCard task={activeTask} /> : null}

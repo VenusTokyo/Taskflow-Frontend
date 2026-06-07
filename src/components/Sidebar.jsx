@@ -3,11 +3,11 @@ import { removeToken, removeUser } from '../lib/auth'
 
 const links = [
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/profile', label: 'Profile' },
+  { to: '/projects',  label: 'Projects'  },
+  { to: '/profile',   label: 'Profile'   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = false, onClose = () => {} }) {
   const navigate = useNavigate()
 
   const logout = () => {
@@ -17,24 +17,20 @@ export default function Sidebar() {
   }
 
   return (
-    <aside style={{
-      width: 220,
-      minHeight: '100vh',
-      background: '#F4F1EA',
-      borderRight: '1px solid #C2CBBE',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '28px 16px',
-      flexShrink: 0,
-    }}>
-      <div style={{ marginBottom: 40 }}>
+    <aside className={`sidebar${isOpen ? ' is-open' : ''}`}>
+      {/* Header row: logo + mobile close button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: '#2F3630', margin: 0 }}>TaskFlow</h2>
+        <button className="sidebar-close" onClick={onClose} aria-label="Close navigation">×</button>
       </div>
+
+      {/* Nav links */}
       <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
         {links.map(link => (
           <NavLink
             key={link.to}
             to={link.to}
+            onClick={onClose}           /* close drawer on mobile after navigation */
             style={({ isActive }) => ({
               display: 'block',
               padding: '10px 16px',
@@ -51,6 +47,8 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      {/* Logout */}
       <button
         onClick={logout}
         style={{

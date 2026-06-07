@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import Sidebar from '../components/Sidebar'
+import AppLayout from '../components/AppLayout'
 import KanbanBoard from '../components/KanbanBoard'
 import Modal from '../components/Modal'
 import api from '../lib/api'
@@ -32,7 +32,7 @@ export default function ProjectDetail() {
     queryFn: () => api.get(`/tasks/project/${id}`).then(r => r.data),
   })
 
-  const invalidateTasks = () => qc.invalidateQueries({ queryKey: ['tasks', id] })
+  const invalidateTasks    = () => qc.invalidateQueries({ queryKey: ['tasks', id] })
   const invalidateProjects = () => {
     qc.invalidateQueries({ queryKey: ['project', id] })
     qc.invalidateQueries({ queryKey: ['projects'] })
@@ -66,38 +66,18 @@ export default function ProjectDetail() {
     onError: err => setProjError(err.response?.data?.error || 'Failed to update project'),
   })
 
-  const openAddTask = (status) => {
-    setTaskForm({ ...EMPTY_TASK, status })
-    setTaskError('')
-    setTaskModal('create')
-  }
-
+  const openAddTask = (status) => { setTaskForm({ ...EMPTY_TASK, status }); setTaskError(''); setTaskModal('create') }
   const openEditTask = (task) => {
     setEditingTask(task)
-    setTaskForm({
-      title: task.title,
-      description: task.description || '',
-      priority: task.priority,
-      dueDate: task.due_date || '',
-      status: task.status,
-    })
+    setTaskForm({ title: task.title, description: task.description || '', priority: task.priority, dueDate: task.due_date || '', status: task.status })
     setTaskError('')
     setTaskModal('edit')
   }
-
-  const closeTaskModal = () => {
-    setTaskModal(null)
-    setEditingTask(null)
-    setTaskError('')
-  }
+  const closeTaskModal = () => { setTaskModal(null); setEditingTask(null); setTaskError('') }
 
   const openEditProject = () => {
     if (!currentProject) return
-    setProjForm({
-      title: currentProject.title,
-      description: currentProject.description || '',
-      status: currentProject.status,
-    })
+    setProjForm({ title: currentProject.title, description: currentProject.description || '', status: currentProject.status })
     setProjError('')
     setProjModal(true)
   }
@@ -105,11 +85,8 @@ export default function ProjectDetail() {
   const handleTaskSubmit = (e) => {
     e.preventDefault()
     setTaskError('')
-    if (taskModal === 'create') {
-      createTaskMutation.mutate({ ...taskForm, projectId: id })
-    } else {
-      updateTaskMutation.mutate({ id: editingTask.id, ...taskForm })
-    }
+    if (taskModal === 'create') createTaskMutation.mutate({ ...taskForm, projectId: id })
+    else updateTaskMutation.mutate({ id: editingTask.id, ...taskForm })
   }
 
   const handleProjectSubmit = (e) => {
@@ -119,65 +96,66 @@ export default function ProjectDetail() {
 
   if (projLoading || tasksLoading) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF8F3' }}>
-        <Sidebar />
-        <main style={{ flex: 1, padding: '40px 48px', color: '#7C8B74' }}>Loading...</main>
-      </div>
+      <AppLayout>
+        <p style={{ color: '#7C8B74' }}>Loading...</p>
+      </AppLayout>
     )
   }
 
   if (!currentProject) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF8F3' }}>
-        <Sidebar />
-        <main style={{ flex: 1, padding: '40px 48px' }}>
-          <p style={{ color: '#4C5A46' }}>Project not found.</p>
-          <button className="btn-secondary" onClick={() => navigate('/projects')}>Back to Projects</button>
-        </main>
-      </div>
+      <AppLayout>
+        <p style={{ color: '#4C5A46', marginBottom: 16 }}>Project not found.</p>
+        <button className="btn-secondary" onClick={() => navigate('/projects')}>
+          Back to Projects
+        </button>
+      </AppLayout>
     )
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF8F3' }}>
-      <Sidebar />
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
-        {/* Project header */}
-        <div style={{ marginBottom: 36 }}>
-          <button
-            onClick={() => navigate('/projects')}
-            style={{
-              background: 'none', border: 'none', color: '#7C8B74', cursor: 'pointer',
-              fontSize: 13, padding: 0, marginBottom: 16,
-            }}
-          >
-            ← Back to Projects
-          </button>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#2F3630', margin: '0 0 8px' }}>
-                {currentProject.title}
-              </h1>
-              {currentProject.description && (
-                <p style={{ color: '#7C8B74', margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-                  {currentProject.description}
-                </p>
-              )}
-            </div>
-            <button className="btn-secondary" onClick={openEditProject} style={{ flexShrink: 0, padding: '8px 20px' }}>
-              Edit Project
-            </button>
+    <AppLayout>
+      {/* Project header */}
+      <div style={{ marginBottom: 36 }}>
+        <button
+          onClick={() => navigate('/projects')}
+          style={{
+            background: 'none', border: 'none', color: '#7C8B74', cursor: 'pointer',
+            fontSize: 13, padding: 0, marginBottom: 16,
+          }}
+        >
+          ← Back to Projects
+        </button>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: 16,
+        }}>
+          <div style={{ flex: 1 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: '#2F3630', margin: '0 0 8px' }}>
+              {currentProject.title}
+            </h1>
+            {currentProject.description && (
+              <p style={{ color: '#7C8B74', margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+                {currentProject.description}
+              </p>
+            )}
           </div>
+          <button className="btn-secondary" onClick={openEditProject} style={{ flexShrink: 0, padding: '8px 20px' }}>
+            Edit Project
+          </button>
         </div>
+      </div>
 
-        {/* Kanban */}
-        <KanbanBoard
-          tasks={tasks}
-          onAddTask={openAddTask}
-          onEditTask={openEditTask}
-          onUpdateStatus={(taskId, newStatus) => updateStatusMutation.mutate({ id: taskId, status: newStatus })}
-        />
-      </main>
+      {/* Kanban — has its own scroll wrapper for mobile */}
+      <KanbanBoard
+        tasks={tasks}
+        onAddTask={openAddTask}
+        onEditTask={openEditTask}
+        onUpdateStatus={(taskId, newStatus) => updateStatusMutation.mutate({ id: taskId, status: newStatus })}
+      />
 
       {/* Task Modal */}
       <Modal
@@ -316,6 +294,6 @@ export default function ProjectDetail() {
           </div>
         </form>
       </Modal>
-    </div>
+    </AppLayout>
   )
 }
